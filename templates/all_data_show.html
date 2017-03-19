@@ -1,0 +1,157 @@
+{% extends 'base/base.html' %}
+{% load cmdb_tags %}
+{% block content %}
+    <div class="fuelux">
+        <div class="fu-example section">
+            <div class="repeater" data-staticheight="400" id="myRepeater" data-currentview="list" data-viewtype="list">
+                <div class="repeater-header">
+                    <div class="repeater-header-left">
+                        <form class="form-inline" method="POST">
+                            {% csrf_token %}
+                            <div class="form-group">
+                                <select class="form-control" name="search_key" style="width: 300px;">
+                                    {% if search_key %}
+                                        <option value="{{ search_key }}">{% get_field_name table_field search_key 'verbose_name' %}</option>
+                                    {% endif %}
+                                    {% for key in list_display %}
+                                        {% if key != search_key %}
+                                            <option value="{{ key }}">{% get_field_name table_field key 'verbose_name' %}</option>
+                                        {% endif %}
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <input type="text" class="form-control" name="search_content"
+                                       value="{{ search_content }}" style="width: 300px;">
+                            </div>
+                            <button type="submit" class="btn btn-default">搜索</button>
+                        </form>
+                    </div>
+                    <div class="repeater-header-right">
+                        {% if import_action %}
+                            <a class="btn btn-info" href="/cmdb/{{ model }}/import/"><i
+                                class="glyphicon glyphicon-import">导入{{ tag_name }}</i></a>
+                        {% endif %}
+                        <a class="btn btn-default" href="javascript:void(0)"
+                           onclick="quick_add($(this).parents('.fuelux'), '{{ model }}')"><i
+                                class="glyphicon glyphicon-plus">添加{{ tag_name }}</i></a>
+                    </div>
+                </div>
+                <div class="repeater-viewport">
+                    <div class="repeater-canvas">
+                        <div class="repeater-list " data-preserve="shallow">
+                            <div class="repeater-list-wrapper" data-infinite="true" data-preserve="shallow">
+                                <table aria-readonly="true" class="table" data-preserve="shallow" role="grid" style="table-layout:fixed;">
+                                    <thead data-preserve="deep">
+                                    <tr>
+                                        {% for key in list_display %}
+                                            <th
+                                            {% ifequal forloop.counter 1 %}
+                                                {% if list_display|length <= 6 %}
+                                                    style="width:{% widthratio 100 list_display|length 1 %}%"
+                                                {% else %}
+                                                    style="width:10%"
+                                                {% endif %}
+                                            {% endifequal %}
+                                            >{% get_field_name table_field key 'verbose_name' %}<span
+                                                    class="glyphicon rlc"></span>
+
+                                                <div class="repeater-list-heading">{% get_field_name table_field key 'verbose_name' %}
+                                                    <span class="glyphicon rlc"></span>
+                                                </div>
+                                            </th>
+
+                                        {% endfor %}
+                                        <th style="width:8%">动作<span class="glyphicon rlc"></span>
+
+                                            <div class="repeater-list-heading">动作
+                                                <span class="glyphicon rlc"></span>
+                                            </div>
+                                        </th>
+                                    </tr>
+                                    </thead>
+                                    <tbody data-container="true">
+                                    {% for one_data in result %}
+                                        <tr>
+                                            {% for field in list_display %}
+                                                <td class="hide-text" title="{% get_field_value one_data field 'text' %}">
+                                                    {% get_field_value one_data field 'text' %}</td>
+                                            {% endfor %}
+                                            <td>
+                                                {% for action, tag, url in action_list %}
+                                                    <a href="javascript:void(0)"
+                                                       onclick="quick_edit($(this).parents('.fuelux'), '{{ model }}', {{ one_data.id }})">
+                                                        <i class='glyphicon glyphicon-{{ tag }}'>{{ action }} </i>
+                                                    </a>
+                                                {% endfor %}
+
+                                                <a href="javascript:void(0)"
+                                                   onclick="delete_one_data('{{ model }}',{{ one_data.id }})"><i
+                                                        class='glyphicon glyphicon-trash'>删除 </i></a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="loader repeater-loader" data-frame="8" style="display: none;"></div>
+                </div>
+                <div class="repeater-footer">
+                    <div class="repeater-footer-left">
+                        <div class="repeater-itemization">
+                            <span>
+                                <small>{{ tag_name }}当前条数:<span class="badge">{{ total_num }}</span></small>
+                                </h4>
+                            </span>
+                        </div>
+                    </div>
+                    {% if page_list %}
+                        <form class="form-inline" method="GET">
+                        <div class="repeater-footer-right">
+                            <div class="btn-group">
+                                <button name="page" type="submit" class="btn btn-default" value="1">首页
+                                </button>
+                                {% for page_num in page_list %}
+                                    {% if page_num == page %}
+                                        <button name="page" type="submit" class="btn btn-info"
+                                                value="{{ page_num }}">{{ page_num }}</button>
+                                    {% else %}
+                                        <button name="page" type="submit" class="btn btn-default"
+                                                value="{{ page_num }}">{{ page_num }}</button>
+                                    {% endif %}
+                                {% endfor %}
+                                <button name="page" type="submit" class="btn btn-default" value="{{ last_page }}">尾页
+                                </button>
+                            </div>
+                        </div>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .hide-text {
+            cursor: pointer;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            word-break:break-all;
+        }
+    </style>
+
+    <script>
+    $(document).ready(function(){
+        $(".hide-text").click(function() {
+            if ($(this).css('white-space') == 'nowrap') {
+                $(this).css('white-space', 'inherit');
+            }else{
+                $(this).css('white-space', 'nowrap');
+            }
+        })
+    });
+    </script>
+{% endblock %}

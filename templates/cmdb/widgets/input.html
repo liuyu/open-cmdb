@@ -1,0 +1,24 @@
+{% load cmdb_tags %}
+
+<div class="form-group {{data|getitem:mname|getitem:'class'}}">
+  <label class="control-label {{mtclass}}" style="text-align:right">
+    {% if data|getitem:mname|getitem:"no_blank" %}
+    <strong>*</strong>
+    {% endif %}
+    {{ data|getitem:mname|getitem:"verbose_name"|capfirst}}:
+  </label>
+
+  <div class="control-group {{mdclass}}">
+    <input class="col-md-12 col-lg-12 form-control" id="{{mname}}_{{data.id}}"
+           type="{% if mname == "password"%}password{% else %}text{% endif %}"
+           value="{{data|getitem:mname|getitem:"value"}}"
+           {{attribute}} {% if mname in readonly_field and action == 'modify' %}readonly="readonly" {% endif %}
+           name="{{mname}}">
+    <div class="help-block">
+      {{data|getitem:mname|getitem:"help_text"|safe|capfirst}}
+    </div>
+    <div class="">
+      <strong> {{data|getitem:mname|getitem:"errormsg"|safe}} </strong>
+    </div>
+  </div>
+</div>

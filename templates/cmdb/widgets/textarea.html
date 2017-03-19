@@ -1,0 +1,21 @@
+{% load cmdb_tags %}
+
+<div class="form-group {{data|getitem:mname|getitem:'class'}}">
+  <label class="control-label {{mtclass}}" style="text-align:right">
+    {% if data|getitem:mname|getitem:"no_blank" %}
+    <strong>*</strong>
+    {% endif %}
+
+    {{ data|getitem:mname|getitem:"verbose_name"|capfirst}}:
+  </label>
+  <div class="control-group {{mdclass}}">
+    <textarea class="form-control" id="{{mname}}_{{data.id}}" rows="{{textarea_rows}}"
+              name="{{mname}}">{{data|getitem:mname|getitem:"value" }}</textarea>
+    <div class="help-block">
+      {{data|getitem:mname|getitem:"help_text"|safe|capfirst}}
+    </div>
+    <div class="">
+      <strong> {{data|getitem:mname|getitem:"errormsg"|safe}} </strong>
+    </div>
+  </div>
+</div>

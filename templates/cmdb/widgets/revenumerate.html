@@ -1,0 +1,23 @@
+{% load cmdb_tags %}
+<div class="form-group {{data|getitem:mname|getitem:'class'}}">
+  <label class="control-label {{mtclass}}" style="text-align:right">
+    {{data|getitem:mname|getitem:"verbose_name"|capfirst}}:
+  </label>
+  <div class="control-group {{mdclass}}">
+    <select class="col-md-12 col-lg-12 form-control" id="{{mname}}_{{data.id}}"
+            name="{{mname}}">
+      {% for choice, choice_name in mchoices_keys|getitem:mname %}
+      <option {% ifequal data|getitem:mname|getitem:"value" choice_name %} selected="selected" {% endifequal %}
+              value="{{choice}}">
+        {{choice_name}}
+      </option>
+      {% endfor %}
+    </select>
+    <div class="help-block">
+      {{data|getitem:mname|getitem:"help_text"|safe|capfirst}}
+    </div>
+    <div class="">
+      <strong> {{data|getitem:mname|getitem:"errormsg"|safe}} </strong>
+    </div>
+  </div>
+</div>

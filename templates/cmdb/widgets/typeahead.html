@@ -1,0 +1,20 @@
+{% load cmdb_tags %}
+
+<div class="form-group {{data|getitem:mname|getitem:'class'}}">
+  <label class="control-label {{mtclass}}" style="text-align:right">
+    {{ data|getitem:mname|getitem:"verbose_name"|capfirst}}:
+  </label>
+  <div class="control-group {{mdclass}}">
+    <input class="col-md-12 col-lg-12 form-control" id="{{mname}}_{{data.id}}"
+           name="{{mname}}"
+           type="text"
+           placeholder="输入搜索" data-provide="typeahead" data-items="10"
+           data-source='{{mchoices_keys|getitem:mname|json_dumps|safe|escape}}' value="{{data|getitem:mname|getitem:'value'}}">
+    <div class="help-block">
+      {{data|getitem:mname|getitem:"help_text"|safe|capfirst}}
+    </div>
+    <div class="">
+      <strong> {{data|getitem:mname|getitem:"errormsg"|safe}} </strong>
+    </div>
+  </div>
+</div>

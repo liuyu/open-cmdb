@@ -1,0 +1,39 @@
+{% extends "base/base_bootstrap.html" %}
+{% block body %}
+    <div class="login-wrapper">
+        <div class="box" style="padding-bottom: 40px;padding-top: 30px;">
+            <div class="content-wrap">
+                <h6>{{ cmdb_name }}登录</h6>
+
+                <form class="login-form" method="post">
+                    {% csrf_token %}
+                    {% if error %}
+                        <div class="alert alert-danger">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+                            {{ error }}
+                        </div>
+                    {% endif %}
+                    <div class="form-group has-feedback">
+                        <!--ie8, ie9 does not support html5 placeholder, so we just show field title for that-->
+                        <input class="form-control placeholder-no-fix" type="text" autocomplete="off"
+                               placeholder="用户"
+                               name="username"/>
+                        <span class="glyphicon glyphicon-user form-control-feedback"></span>
+                    </div>
+                    <div class="form-group has-feedback">
+                        <input class="form-control placeholder-no-fix" type="password" autocomplete="off"
+                               placeholder="密码" name="password"/>
+                        <span class="glyphicon glyphicon-lock form-control-feedback"></span>
+                    </div>
+                    <div class="form-actions">
+                        <input name="next" id="next" type="hidden" value="{{ next }}">
+                        <button type="submit" class="btn btn-info pull-right">
+                            登录 <i class="m-icon-swapright m-icon-white"></i>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- /container -->
+{% endblock %}

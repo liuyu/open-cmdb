@@ -1,0 +1,47 @@
+{% load cmdb_tags %}
+
+<div class="form-group {{data|getitem:mname|getitem:'class'}}">
+  <label class="control-label {{mtclass}}" style="text-align:right">
+    {% if data|getitem:mname|getitem:"no_blank" %}
+    <strong>*</strong>
+    {% endif %}
+
+    {{ data|getitem:mname|getitem:"verbose_name"|capfirst}}:
+  </label>
+
+  <div class="{{mdclass}}" id="datetime_{{mname}}_{{data.id}}" >
+    <div class="input-group date" id="datetimepicker_{{mname}}_{{data.id}}">
+      <input type="text" class="form-control"
+             id="{{mname}}_{{data.id}}"
+
+             {% if data|getitem:mname|getitem:"value"|date:"Y-m-d H:i" %}
+             value='{{data|getitem:mname|getitem:"value"|date:"Y-m-d H:i" }}'
+             {% else %}
+             value='{{data|getitem:mname|getitem:"value"}}'
+
+             {% endif %}
+
+             name="{{mname}}"
+              >
+      <span class="input-group-addon">
+        <span class="glyphicon glyphicon-calendar"></span>
+      </span>
+    </div>
+    <div class="help-block">
+      {{ data|getitem:mname|getitem:"help_text"|safe|capfirst}}
+    </div>
+    <div class="">
+      <strong> {{data|getitem:mname|getitem:"errormsg"|safe}} </strong>
+    </div>
+  </div>
+</div>
+
+<script>
+ $(function () {
+     $('#datetimepicker_{{mname}}_{{data.id}}').datetimepicker({
+                format: 'yyyy-mm-dd hh:ii',
+                 autoclose: true,
+            }
+ );
+ });
+</script>

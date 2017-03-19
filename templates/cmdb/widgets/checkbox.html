@@ -1,0 +1,13 @@
+{% load cmdb_tags %}
+
+<div class="form-group">
+  <div class="control-group {{mtclass}}" style="text-align:right"></div>
+  <label class="checkbox-list {{mdclass}}">
+    <input type="checkbox" id="{{mname}}_{{data.id}}" {{mdattr}}
+           name="{{mname}}" value="True" {% if data|getitem:mname|getitem:"value" %} checked="checked" {% endif %}
+           >{{data|getitem:mname|getitem:"verbose_name"|capfirst}}
+    <div class="help-block">
+      {{data|getitem:mname|getitem:"help_text"|safe|capfirst}}</div>
+
+  </label>
+</div>

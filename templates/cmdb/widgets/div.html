@@ -1,0 +1,15 @@
+{% load cmdb_tags %}
+<div class="form-group {{data|getitem:mname|getitem:'class'}}">
+  <div class="control-group {{mtclass}}" style="text-align:right"
+       >{{data|getitem:mname|getitem:"verbose_name"|capfirst}}:</div>
+  <div class="control-group {{mdclass}}">
+    <div class="col-md-12 col-lg-12" id="{{mname}}_{{data.id}}"
+         name="{{mname}}">{{data|getitem:mname|getitem:"value"}}</div>
+    <div class="help-block">
+      {{data|getitem:mname|getitem:"help_text"|safe|capfirst}}
+    </div>
+    <div class="">
+      <strong> {{data|getitem:mname|getitem:"errormsg"|safe}} </strong>
+    </div>
+  </div>
+</div>

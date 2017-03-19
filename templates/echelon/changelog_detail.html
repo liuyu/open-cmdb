@@ -1,0 +1,9 @@
+<table class="table table-bordered table-striped">
+    {% for item in changes %}
+    <tr style="text-align: left">
+      <th style="width: 20%">{{ item.0 }}</th>
+      <td style="width: 40%">{{ item.1.0 }}</td>
+      <td style="width: 40%">{{ item.1.1 }}</td>
+    </tr>
+    {% endfor %}
+</table>

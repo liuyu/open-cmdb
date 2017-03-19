@@ -1,0 +1,160 @@
+{% extends "base/base.html" %}
+{% load cmdb_tags %}
+{% load admin_list i18n echelon_changelog %}
+
+
+{% block title %}
+查询操作历史
+{% endblock %}
+
+{% block content %}
+<!-- Content Header (Page header) -->
+<section class="content-header">
+
+<div id="changelist-filter">
+  <h2> 查询操作历史 <small> 可按表名称 / 操作人 / 操作内容关键字 </small></h2>
+
+  <form method="GET" action="" class="form-inline form_search">
+    <div class="row">
+      <div class="form-group">
+        <label for="content_type">名称:</label>
+        <input id="content_type" name="content_type" type="text" class="form-control"
+               placeholder="过滤表名称" data-provide="typeahead" data-items="100"
+               data-source='{{models|safe|escape}}' value="{{selected}}">
+      </div>
+
+      <div class="form-group">
+        <label for="who">用户:</label>
+        <input name="who" type="text" class="form-control"
+               placeholder="过滤用户" data-provide="typeahead" data-items="20"
+               data-source='{{users|safe|escape}}' value="{{who}}">
+      </div>
+
+      <div class="form-group">
+        <label for="changes">变更:</label>
+        <input name="changes" type="text" class="form-control"
+               placeholder="过滤变更内容"
+               value="{{changes}}">
+      </div>
+    </div>
+    <div class="col-md-4 col-lg-4 pull-right">
+      <div class="col-md-7 col-lg-7">
+        <label class="checkbox input-xs col-12 col-lg-12">
+          <input type="radio"
+                 name="detail" value="" checked="checked"
+                 title="显示所有字段内容">默认
+        </label>
+
+        <label class="checkbox input-xs col-12 col-lg-12">
+          <input type="radio"
+                 name="detail" value="diff" {% ifequal detail "diff"%} checked="checked" {% endifequal %}
+                 title="显示所有字段内容">差异
+        </label>
+
+        <label class="checkbox input-xs col-12 col-lg-12">
+          <input type="radio"
+                 name="detail" value="detail" {% ifequal detail "detail"%} checked="checked" {% endifequal %}
+                 title="显示所有字段内容">详细
+        </label>
+
+      </div>
+      <div class="col-md-4 col-lg-4">
+        <button type="submit" class="btn btn-primary"><i class="icon-search"></i>查询</button>
+      </div>
+    </div>
+
+    <input type="hidden" name="p" value="{{page_n}}" id="form_search_page">
+
+    <span class="col-md-8 col-lg-8">
+      {% if page_choices|length > 1 %}
+      <ul class="pagination">
+          {% if not page_pre %}
+          {% else %}
+          <li>
+            <a href="#"
+               onclick="$('#form_search_page').val($(this).attr('value'));$('.form_search').submit();"
+               class="btn-sm"
+               value="{{ page_n|add:-1  }}"> Prev</a>
+
+          </li>
+          {% endif %}
+
+          {% for page_i in page_choices %}
+          <li {% ifequal page_n page_i|add:1 %} class="active" {% endifequal %}>
+            <a href="#" onclick="$('#form_search_page').val($(this).attr('value'));$('.form_search').submit();"
+               class="btn-sm"
+               value="{{page_i|add:1}}"> {{page_i|add:1}}</a>
+          </li>
+          {% endfor %}
+
+          {% if not page_next %}
+          {% else %}
+          <li>
+            <a href="#" onclick="$('#form_search_page').val($(this).attr('value'));$('.form_search').submit();"
+               class="btn-sm"
+               value="{{page_n|add:1}}"> Next</a>
+          </li>
+          {% endif %}
+        </ul>
+      {% endif %}
+    </span>
+
+
+  </form>
+
+</div>
+
+</section>
+
+<!-- Main content -->
+<section class="content">
+
+  <div class="results ">
+    <table class="table table-bordered table-striped">
+      <thead>
+        <tr>
+          <th >对象</th><th>操作人</th><th>动作</th><th>时间</th>
+        </tr>
+      </thead>
+      <tbody class="box">
+        {% for log in page.object_list %}
+        <tr>
+          <th >({{ log.content_type }}) {{ log.object_str }}</th>
+          <td >{{ log.who }}</td>
+          <td >{{ log.action }}</td>
+          <td >{{ log.timestamp|date:"Y-m-d H:i:s" }}</td>
+        </tr>
+
+        {% if detail %}
+        <tr>
+          <td colspan="100%">
+            <table class="table" >
+              <tbody>
+                {% for item, value in log.before_change.items %}
+
+                {% if detail == "detail" or log.changes|getitem:item %}
+
+                <tr style="text-align: left">
+                  <th {% if log.changes|getitem:item %}
+                       class="alert-info"
+                       {% endif %} style="width: 20%">{{ item }}</th>
+                  <td style="word-break:break-all; width: 40%">{{ value }}</td>
+                  <td style="word-break:break-all; width: 40%">
+                    {{ log.after_change|getitem:item }}
+                  </td>
+                </tr>
+                {% endif %}
+                {% endfor %}
+              </tbody>
+            </table>
+          </td>
+        </tr>
+        {% endif %}
+
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+
+{% endblock %}

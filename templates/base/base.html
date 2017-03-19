@@ -1,0 +1,40 @@
+{% extends "base/base_bootstrap.html" %}
+
+{% load cmdb_tags %}
+
+{% block title %}
+{% endblock %}
+
+{% block body %}
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/home/">CMDB</a>
+            </div>
+
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    {% for menu in cmdb_menu %}
+                        <li class="{% menu_active request menu.1 %}">
+                            <a href="{{ menu.1 }}"><i class="glyphicon glyphicon-{{ menu.2 }}">{{ menu.0 }}</i></a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    {% if request.user.is_authenticated or user.is_authenticated %}
+                        <li><a><i class="glyphicon glyphicon-user">{{ request.user }}</i></a></li>
+                        <li><a href="{% url 'cmdb_logout' %}" title="登出"><i class="icon-key"></i> 登出 </a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+    <br>
+    <br>
+    <br>
+    <div class="col-md-12 col-sm-12 col-xs-12">
+        {% block content %}
+        {% endblock %}
+    </div>
+{% endblock %}

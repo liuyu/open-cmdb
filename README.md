@@ -1,71 +1,26 @@
 # 简介
 
-OPEN-CMDB是使用Python、Django、Puppet开发的一套简单的CMDB系统。
+Open-cmdb是基于Python2.7、Django1.7、Puppet开发的一套快速将服务器软硬件等信息集中化展示的系统。
 
-# 部署open-cmdb
+代码比较简单，开发初衷主要是为了方便快速展示Puppet收集上来的所有服务器信息。
 
-## 1. 安装依赖:
+> 主要功能有：
+> * 快速展示服务器信息
+> * 支持服务器信息录入
 
-    要求: python2.7
+如果环境中已有Puppet，此系统能快速接入，否则需要自行配置Puppet环境。目前暂时不支持Ansible的YAML格式。
 
-    #确认python编译包有装, 否则mysql/curl模块可能无法编译:
-    yum install python-devel
-    yum install libcurl-devel
+## 环境依赖
 
-    pip install -r ./requirements.txt
+* Python2.7
+* Django1.7
 
+你可以通过此[手册](https://github.com/oysterclub/open-cmdb/wiki/Cetnos6-Installing-Python2.7)完成基础环境配置
 
-## 2. 初始化数据库
+你可以通过[官方手册](https://github.com/oysterclub/open-cmdb/wiki)快速构建此系统
 
-    # 如果有cmdb库, 先删掉
-    # mysql -u root -p -e "DROP DATABASE cmdb;"
+关于此系统更详细的介绍，可以参考书籍：《运维前线》[豆瓣介绍](https://read.douban.com/ebook/30348001/)
 
-    mysql -u root -p -e "CREATE DATABASE cmdb CHARACTER SET='utf8';"
+## 讨论
 
-    # 修改 ./local_settings.py 中的数据库密码配置后, 运行:
-
-    python ./manage.py syncdb --noinput
-    # python ./manage.py migrate
-
-
-## 3. 创建管理员账户, 密码建议使用12位字母数字随机串
-
-    python ./manage.py createsuperuser --username=admin --email=admin@example.com
-
-
-## 4. 运行open-cmdb:
-
-    python ./manage.py runfcgi method=threaded host=127.0.0.1 port=8000
-
-    #如需停止, 请执行:
-
-    kill -9 `ps aux | grep port=8000 | awk '{print $2}'`
-
-
-## 5. 设置nginx代理8000端口, server配置:
-
-    # 注意 /data/open-cmdb/static/ 目录需要nginx用户可读, 否则访问静态文件会报403.
-
-    server {
-        listen   80;
-        server_name cmdb.xxxx.com;
-
-        client_max_body_size 2G;
-
-        location / {
-            fastcgi_pass 127.0.0.1:8000;
-            fastcgi_param PATH_INFO $fastcgi_script_name;
-            fastcgi_param REQUEST_METHOD $request_method;
-            fastcgi_param QUERY_STRING $query_string;
-            fastcgi_param CONTENT_TYPE $content_type;
-            fastcgi_param CONTENT_LENGTH $content_length;
-            fastcgi_pass_header Authorization;
-            fastcgi_intercept_errors off;
-            fastcgi_param SERVER_PROTOCOL $server_protocol;
-            fastcgi_param SERVER_PORT $server_port;
-            fastcgi_param SERVER_NAME $server_name;
-        }
-        location /static/ {
-            root /data/open-cmdb/;
-        }
-    }
+如果大家有什么疑问，欢迎接 #issue

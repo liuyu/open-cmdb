@@ -1,0 +1,43 @@
+{% load cmdb_tags %}
+
+<div class="form-group {{data|getitem:mname|getitem:'class'}}">
+  <label class="control-label {{mtclass}}" style="text-align:right">
+    {% if data|getitem:mname|getitem:"no_blank" %}
+    <strong>*</strong>
+    {% endif %}
+    {{data|getitem:mname|getitem:"verbose_name"|capfirst}}:
+  </label>
+
+  <div class="control-group {{mdclass}}">
+
+      <select class="col-md-12 col-lg-12" id="{{mname}}_{{id}}" {{mdattr}}
+              name="{{mname}}" multiple="multiple">
+
+      {% for l, name in manytomany_keys|getitem:mname %}
+          <option value="{{l}}" title="{{name}}"
+          {% if l in data|getitem:mname|getitem:"value" %}selected="selected"{% endif %}
+          >
+            {{name}}
+          </option>
+      {% endfor %}
+
+      </select>
+
+    <span class="label label-default"
+          style="padding:2px;font-weight:lighter;font-size:1px;float:right;margin-right:40px;margin-top:1px">
+        ( <i class="fa fa-check-square-o"></i> 可多选)</span>
+
+    <div class="help-block">
+      {{data|getitem:mname|getitem:"help_text"|safe|capfirst}}
+    </div>
+    <div class="">
+      <strong> {{data|getitem:mname|getitem:"errormsg"|safe}} </strong>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+    $(document).ready(function(){
+        //让多选框选中已选择项
+        $("#{{mname}}_{{id}}").select2({"width":"100%"})
+    });
+</script>

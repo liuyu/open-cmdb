@@ -1,0 +1,59 @@
+{% extends "rest_framework/base.html" %}
+
+{% block head %}
+    {% if not request.user.is_authenticated and not user.is_authenticated %}
+    <script>
+        window.location = "/login/?next=/api/"
+    </script>
+    {% endif %}
+
+    {{ block.super }}
+{% endblock %}
+
+{% load cmdb_tags %}
+
+{% block title %}CMDB SYSTEM{% endblock %}
+
+{% block style %}
+
+    {{ block.super }}
+    <style>
+    .navbar {
+        background-image: linear-gradient(to bottom,#3c3c3c 0,#222 100%);
+        border-top: none;
+        border-width: 0 0 1px;
+        border-color: #080808;
+        }
+    .navbar .nav li a{
+        color: #9d9d9d
+    }
+    </style>
+
+{% endblock %}
+
+{% block navbar %}
+    <header class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="/home/">CMDB</a>
+            </div>
+
+            <div class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    {% for menu in cmdb_menu %}
+                        <li class="{% menu_active request menu.1 %}">
+                            <a href="{{ menu.1 }}"><i class="glyphicon glyphicon-{{ menu.2 }}">{{ menu.0 }}</i></a>
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    {% if request.user.is_authenticated or user.is_authenticated %}
+                        <li><a><i class="glyphicon glyphicon-user">{{ request.user }}</i></a></li>
+                        <li><a href="{% url 'cmdb_logout' %}" title="登出"><i class="icon-key"></i> 登出 </a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+    </header>
+{% endblock %}
