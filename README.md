@@ -23,4 +23,4 @@ Open-cmdb是基于Python2.7、Django1.7、Puppet开发的一套快速将服务�
 
 ## 讨论
 
-如果大家有什么疑问，欢迎接 #issue
+如果大家有什么疑问，欢迎提 #issue
